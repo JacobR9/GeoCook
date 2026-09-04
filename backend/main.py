@@ -39,4 +39,10 @@ async def search_areas(query: str):
                if query.lower() in area["strArea"].lower()]
 
     return {"matches": matches}
-        
+
+@app.get("areas/{area}/meals")
+async def get_meals(area: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{MEALDB_BASE}/filter.php", params=({"a": area}))
+    meals = response.json().get("meals") or []  #[] if no meals
+    return {"meals: meals"}

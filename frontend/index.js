@@ -1,3 +1,6 @@
+const areaInput = document.getElementById("area1");
+const dropdown = document.getElementById("dropdown-div");
+
 async function searchArea(query) {
   const response = await fetch(
     `http://127.0.0.1:8000/areas/search?query=${encodeURIComponent(query)}`
@@ -9,28 +12,37 @@ async function searchArea(query) {
 
   const data = await response.json();
 
-  displayResults(data.matches);
+  displayDropdown(data.matches);
 }
 
-function displayResults(results){
-    const resultsBox = document.getElementById("results");
-    resultsBox.innerHTML = ""; //clear box
+function displayDropdown(results){
+    const resultsDropdown = document.getElementById("dropdown");
+    resultsDropdown.innerHTML = ""; //clear box
 
     if (results.length === 0) {
-        resultsBox.textContent = "No matches found.";
+        resultsDropdown.textContent = "No matches found.";
         return;
     }
 
     results.forEach((result) => {
-        const item = document.createElement("p");
+        const item = document.createElement("div");
+        item.classList.add("dropdown-item");
         item.textContent = `${result.strArea} (${result.strCountry})`
-        resultsBox.appendChild(item);
+
+        item.addEventListener("click", () => {
+            areaInput.value = result.strCountry;
+            resultsDropdown.innerHTML = "";
+        });
+        resultsDropdown.appendChild(item);
     });
 }
 
-const areaInput = document.getElementById("area");
-const areaInputBtn = document.getElementById("Submit");
-areaInputBtn.addEventListener('click', () => {
-    console.log('Submit was clicked');
-    searchArea(areaInput.value);
-});
+areaInput.addEventListener('input', () =>{
+    const query = areaInput.value.toLowerCase();
+
+     if (query.length === 0) {
+        return;
+     }
+     searchArea(query);
+})
+
