@@ -3,10 +3,23 @@
 <head>
     <meta charset = "UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Title</title>
+    <title>GeoCook</title>
 </head>
 <body>
-    <h1>Test</h1>
+    <div>
+        <h1>Welcome to Geocook</h1>
+        <p>Welcome to GeoCook</p>
+    </div>
+
+    <div class="inputArea">
+        <label for="area">Area/Country: </label>
+        <input type="text" id="area" name="area">
+        <br><br>
+        <button type="button" id="Submit" onlick="alert(clicked)">Submit</button>
+    </div>
+
+    <div id="results"></div>
+
 </body>
 <script src="index.js"></script>
 </html>

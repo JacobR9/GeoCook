@@ -2,12 +2,22 @@ from fastapi import FastAPI
 import os
 import dotenv
 import httpx
+from fastapi.middleware.cors import CORSMiddleware
 
 dotenv.load_dotenv()
 MEALDB_KEY = os.getenv("MEALDB_API_KEY", "1")
 MEALDB_BASE = f"https://www.themealdb.com/api/json/v1/{MEALDB_KEY}"
 
 app = FastAPI()
+
+# setup CORS
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5500"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
