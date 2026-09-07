@@ -17,8 +17,8 @@ export async function getMealsByArea(area: string): Promise<Meal[]> {
 }
 
 export async function getMealDetail(id: string): Promise<MealDetail> {
-  const response = await fetch(`${API_BASE}/meals/${id}`);
+  const response = await fetch(`${API_BASE}/meals/${id}/details`);
   if (!response.ok) throw new Error(`Failed to fetch meal detail: ${response.status}`);
-  const data: { meals: MealDetail[] } = await response.json();
-  return data.meals[0];
+  const data: { details: MealDetail[] } = await response.json();
+  return data.details[0];
 }

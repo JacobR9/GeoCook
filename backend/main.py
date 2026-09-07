@@ -47,9 +47,9 @@ async def get_meals(area: str):
     meals = response.json().get("meals") or []  #[] if no meals
     return {"meals": meals}
 
-@app.get("meals/{meal_id}/details")
+@app.get("/meals/{meal_id}/details")
 async def get_meal_details(meal_id: str):
     async with httpx.AsyncClient() as client:
         response = await client.get(f"{MEALDB_BASE}/lookup.php", params=({"i": meal_id}))
-    details = response.json().get("details") or []
+    details = response.json().get("meals") or []
     return {"details": details}
