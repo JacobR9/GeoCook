@@ -16,19 +16,19 @@ function MealDetailPage() {
 
 
     function splitInstructions(instructions: string | null): string[] {
-    if (!instructions) return [];
+        if (!instructions) return [];
 
-    const splitLines = instructions.split(/\r?\n/).map((step) => step.trim()).filter((step) => step.length > 0);
+        const splitLines = instructions.split(/\r?\n/).map((step) => step.trim()).filter((step) => step.length > 0);
 
-    const formattedSteps: string[] = [];
+        const formattedSteps: string[] = [];
 
-    for (const line of splitLines){
-        const isStepLine = /^(step\s*\d+[.:)]?|\d+[.)]?)$/i.test(line);
-        if (isStepLine){continue;} 
-        formattedSteps.push(line);
-    }
-    
-    return formattedSteps;
+        for (const line of splitLines){
+            const isStepLine = /^(step\s*\d+[.:)]?|\d+[.)]?)$/i.test(line);
+            if (isStepLine){continue;} 
+            formattedSteps.push(line);
+        }
+        
+        return formattedSteps;
     }
 
     const steps = meal ? splitInstructions(meal.strInstructions) : [];
@@ -46,7 +46,37 @@ function MealDetailPage() {
         trackMouse: true,   //for mouse testing
     });
 
+    function getIngredients(meal: MealDetail): string[]{
+
+        const ingredients: string[] = [];
+
+        for (let i=1; i<=20; i++){
+            const key = `strIngredient${i}` as keyof MealDetail;
+            const value = meal[key] as string | null;
+
+            if (!value || value.trim() === ""){break;}
+            ingredients.push(value);
+        }
+        return ingredients;
+    }
+
+    function getMeasurements(meal: MealDetail): string[]{
+        const measurements = [];
+
+        for (let i=1; i<=20; i++){
+            const key = `strMeasure${i}` as keyof MealDetail;
+            const value = meal[key] as string | null;
+
+            if (!value || value.trim() === ""){break;}
+            measurements.push(value);
+        }
+        return measurements;
+    }
+
     if (!meal) return <p>Meal not found</p>;
+
+    const ingredients = meal ? getIngredients(meal) : [];
+    const measurements = meal ? getMeasurements(meal) : [];
 
     return (
     <div {...swipeHandlers}>
@@ -54,10 +84,27 @@ function MealDetailPage() {
       <p>Step {currentStep + 1} of {steps.length}</p>
       <br></br>
       <p>{steps[currentStep]}</p>
-
+      <br></br>
       <div>
         <button onClick={prevStep}>Back</button>
         <button onClick={nextStep}>Next</button>
+      </div>
+      <br></br>
+      <div>
+        <div>
+            <h2>Ingredients</h2>
+            <ul>
+                {ingredients.map((ingredient, index) => (
+                <li key = {index}>{ingredient}</li>))}
+            </ul>
+        </div>
+        <div>
+            <h2>Measurements</h2>
+            <ul>
+                {measurements.map((measurement, index) => (
+                <li key = {index}>{measurement}</li>))}
+            </ul>
+        </div>
       </div>
     </div>
   );
