@@ -1,24 +1,52 @@
 import {useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import {useSwipeable} from "react-swipeable";
 import { getMealDetail } from "../api";
 import type {MealDetail} from "../types";
 
 function MealDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const [meal, setMeal] = useState<MealDetail | null>(null);
+    const { id } = useParams<{ id: string }>();
+    const [meal, setMeal] = useState<MealDetail | null>(null);
+    const [currentStep, setCurrentStep] = useState(0); 
 
-  useEffect(() => {
+    useEffect(() => {
     if (id) getMealDetail(id).then(setMeal);
-  }, [id]);
+    }, [id]);
 
-  if (!meal) return <p>Loading...</p>;
+    function splitInstructions(instructions: string | null): string[] {
+    if (!instructions) return [];
 
-  return (
-    <div>
+    return instructions.split(/\r?\n/).map((step) => step.trim()).filter((step) => step.length > 0);
+
+    }
+
+    const steps = meal ? splitInstructions(meal.strInstructions) : [];
+    console.log(steps);
+
+    function nextStep() {
+        setCurrentStep((s) => Math.min(s + 1, steps.length - 1));
+    }
+
+    function prevStep() {
+        setCurrentStep((s) => Math.max(s - 1, 0));
+    }
+
+    const swipeHandlers = useSwipeable({onSwipedLeft: nextStep, onSwipedRight: prevStep,
+        trackMouse: true,   //for mouse testing
+    });
+
+    if (!meal) return <p>Meal not found</p>;
+
+    return (
+    <div {...swipeHandlers}>
       <h1>{meal.strMeal}</h1>
-      <img src={meal.strMealThumb ?? ""} width={300} />
-      <p>{meal.strInstructions}</p>
+      <p>{steps[currentStep]}</p>
+
+      <div>
+        <button onClick={prevStep}>Back</button>
+        <button onClick={nextStep}>Next</button>
+      </div>
     </div>
   );
 }
