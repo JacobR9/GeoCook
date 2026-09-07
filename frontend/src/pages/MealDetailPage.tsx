@@ -14,15 +14,25 @@ function MealDetailPage() {
     if (id) getMealDetail(id).then(setMeal);
     }, [id]);
 
+
     function splitInstructions(instructions: string | null): string[] {
     if (!instructions) return [];
 
-    return instructions.split(/\r?\n/).map((step) => step.trim()).filter((step) => step.length > 0);
+    const splitLines = instructions.split(/\r?\n/).map((step) => step.trim()).filter((step) => step.length > 0);
 
+    const formattedSteps: string[] = [];
+
+    for (const line of splitLines){
+        const isStepLine = /^(step\s*\d+[.:)]?|\d+[.)]?)$/i.test(line);
+        if (isStepLine){continue;} 
+        formattedSteps.push(line);
+    }
+    
+    return formattedSteps;
     }
 
     const steps = meal ? splitInstructions(meal.strInstructions) : [];
-    console.log(steps);
+    //console.log(steps);
 
     function nextStep() {
         setCurrentStep((s) => Math.min(s + 1, steps.length - 1));
@@ -41,6 +51,8 @@ function MealDetailPage() {
     return (
     <div {...swipeHandlers}>
       <h1>{meal.strMeal}</h1>
+      <p>Step {currentStep + 1} of {steps.length}</p>
+      <br></br>
       <p>{steps[currentStep]}</p>
 
       <div>
