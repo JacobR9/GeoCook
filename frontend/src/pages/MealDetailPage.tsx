@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {useSwipeable} from "react-swipeable";
 import { getMealDetail } from "../api";
 import type {MealDetail} from "../types";
+import {YoutubePlayer} from "../components/YoutubePlayer";
 
 function MealDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -14,6 +15,10 @@ function MealDetailPage() {
     if (id) getMealDetail(id).then(setMeal);
     }, [id]);
 
+    const steps = meal ? splitInstructions(meal.strInstructions) : [];
+    //console.log(steps);
+
+    const isFinalStep = currentStep === steps.length-1; //boolean for yt player
 
     function splitInstructions(instructions: string | null): string[] {
         if (!instructions) return [];
@@ -30,9 +35,6 @@ function MealDetailPage() {
         
         return formattedSteps;
     }
-
-    const steps = meal ? splitInstructions(meal.strInstructions) : [];
-    //console.log(steps);
 
     function nextStep() {
         setCurrentStep((s) => Math.min(s + 1, steps.length - 1));
@@ -92,6 +94,12 @@ function MealDetailPage() {
       <br></br>
       <div>
         <div>
+            {isFinalStep && ( 
+                <div className="youtube-player">
+                <br></br>
+                <YoutubePlayer videoId="BN1WwnEDWAM" />
+                </div>
+            )}
             <h2>Ingredients</h2>
             <ul>
                 {ingredients.map((ingredient, index) => (
