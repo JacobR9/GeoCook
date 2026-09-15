@@ -14,7 +14,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500"],
+    allow_origins=["http://localhost:5173"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -46,3 +46,10 @@ async def get_meals(area: str):
         response = await client.get(f"{MEALDB_BASE}/filter.php", params=({"a": area}))
     meals = response.json().get("meals") or []  #[] if no meals
     return {"meals": meals}
+
+@app.get("/meals/{meal_id}/details")
+async def get_meal_details(meal_id: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{MEALDB_BASE}/lookup.php", params=({"i": meal_id}))
+    details = response.json().get("meals") or []
+    return {"details": details}
