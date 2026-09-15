@@ -29,6 +29,41 @@ Without debouncing, a six-letter search term would trigger six separate requests
 
 Beyond efficiency, debouncing also fixed a correctness issue observed during testing: without it, fast typing could trigger a search after only the first letter had registered, with subsequent keystrokes arriving after that request was already in flight, effectively skipping letters and searching on an incomplete or incorrect string. Waiting for a short pause in typing before firing the request ensures the search always reflects what the user actually intended to type, not just whatever had registered at the moment the request fired.
 
+
+## Frontend Technology Stack
+ 
+### Migrating to TypeScript before the codebase grew further
+ 
+The frontend was originally built in plain HTML/JS/CSS, then converted to TypeScript early in development rather than being left until closer to completion.
+ 
+**Reasoning:**
+Catching a type mismatch is far cheaper the moment it's introduced than after several more features have been built on top of it, once a project has accumulated enough surface area, tracking down where an unexpected `undefined` originated becomes significantly harder. Migrating early meant type checking could be established as a foundation the rest of the app was built on, rather than retrofitted across a much larger codebase later. It also surfaces mismatches between what the app expects and what it actually receives, whether from TheMealDB's API responses or from GeoCook's own curated data files, at compile time rather than as a runtime crash a user could hit.
+ 
+### Choosing React over continuing with plain TypeScript
+ 
+The frontend was further migrated from plain TypeScript with manual DOM manipulation to React, using React Router for the step by step SPA flow.
+ 
+**Reasoning:**
+React's hook system (`useState`, `useEffect`, `useMemo`) gives a clean, declarative way to manage the state that drives the step by step cooking flow, rather than manually tracking and updating DOM elements by hand as the user moves between steps. Just as importantly, adopting a mainstream framework opens up its ecosystem: interaction patterns that would otherwise need to be built from scratch, such as swipe gestures for navigating steps on mobile, are available as importable, well maintained libraries rather than custom code GeoCook would need to write and maintain itself.
+ 
+---
+ 
+## Song and Facts Content
+ 
+### Storing songs and facts as a static JSON file rather than a database
+ 
+Curated song and fact data for each country is stored as a hand written JSON file bundled with the frontend, rather than in a database table.
+ 
+**Reasoning:**
+This content is entirely hand curated by the developer rather than user generated, so it only changes when new entries are manually added, it has no need for the write access, querying, or persistence a database provides. A static JSON file avoids the overhead of provisioning, hosting, and querying a database for a small, known dataset, keeps the project consistent with the existing decision not to run a database for recipe data either, and keeps deployment simple, since the curated data ships as part of the frontend build rather than requiring a separate data layer to stand up and maintain.
+ 
+### Displaying the song after the final step rather than during instructions
+ 
+The curated song is shown once, after the last instruction step, rather than being attached to a specific step partway through the recipe.
+ 
+**Reasoning:**
+TheMealDB returns each recipe's instructions as a single block of text, which GeoCook splits into individual steps on the frontend. Because the number of resulting steps varies considerably from meal to meal, there is no consistent point within that split that would make sense as a natural place to insert a song across every recipe. Placing the song after the final step avoids relying on an arbitrary or meal specific insertion point, keeps the instruction reading flow uninterrupted from start to finish, and reads naturally as a closing moment once the cooking itself is done, rather than a disruption in the middle of it.
+
 ---
 
 ## Status
