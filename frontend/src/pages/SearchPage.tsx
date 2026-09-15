@@ -52,7 +52,7 @@ function SearchPage() {
 
       <div className="meals-div">
         {meals.map((meal) => (
-          <div key={meal.idMeal} onClick={() => navigate(`/meal/${meal.idMeal}`)}>
+          <div key={meal.idMeal} onClick={() => navigate(`/country/${meal.strArea}/meal/${meal.idMeal}`)}>
             <img src={meal.strMealThumb} alt={meal.strMeal} width={100} />
             <p>{meal.strMeal}</p>
           </div>

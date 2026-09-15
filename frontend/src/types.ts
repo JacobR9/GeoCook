@@ -41,3 +41,9 @@ export interface MealDetail {
   strCreativeCommonsConfirmed: string | null;
   dateModified: string | null;
 }
+
+export interface CountryEntry {
+  country: string;
+  songs: {title: string; artist: string; youtubeID: string;}[];
+  facts: string[];
+}

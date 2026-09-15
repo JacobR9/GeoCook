@@ -7,8 +7,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<SearchPage />} />
-        <Route path="/meal/:id" element={<MealDetailPage />} />
-      </Routes>
+        <Route path="/country/:area/meal/:id" element={<MealDetailPage />} />      </Routes>
     </BrowserRouter>
   );
 }

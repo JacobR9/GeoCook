@@ -1,13 +1,15 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useMemo} from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import {useSwipeable} from "react-swipeable";
 import { getMealDetail } from "../api";
 import type {MealDetail} from "../types";
 import {YoutubePlayer} from "../components/YoutubePlayer";
+import countryInfo from '../data/country-info.json';
 
 function MealDetailPage() {
     const { id } = useParams<{ id: string }>();
+    const {area} = useParams<{area: string}>();
     const [meal, setMeal] = useState<MealDetail | null>(null);
     const [currentStep, setCurrentStep] = useState(0); 
 
@@ -19,6 +21,14 @@ function MealDetailPage() {
     //console.log(steps);
 
     const isFinalStep = currentStep === steps.length-1; //boolean for yt player
+
+    const song = useMemo(() => {
+        if (!area) return undefined;
+        const entry = countryInfo[area];
+        if (!entry) return undefined;
+        return entry.songs[Math.floor(Math.random()*entry.songs.length)];    //pick a rand song
+    }, [area]);
+    
 
     function splitInstructions(instructions: string | null): string[] {
         if (!instructions) return [];
@@ -94,10 +104,10 @@ function MealDetailPage() {
       <br></br>
       <div>
         <div>
-            {isFinalStep && ( 
+            {isFinalStep && song &&( 
                 <div className="youtube-player">
                 <br></br>
-                <YoutubePlayer videoId="BN1WwnEDWAM" />
+                <YoutubePlayer videoId={song.youtubeID} />
                 </div>
             )}
             <h2>Ingredients</h2>
