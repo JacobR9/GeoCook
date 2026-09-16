@@ -28,6 +28,13 @@ function MealDetailPage() {
         if (!entry) return undefined;
         return entry.songs[Math.floor(Math.random()*entry.songs.length)];    //pick a rand song
     }, [area]);
+
+    const fact = useMemo(() => {
+        if (!area) return undefined;
+        const entry = countryInfo[area];
+        if (!entry) return undefined;
+        return entry.facts[Math.floor(Math.random()*entry.facts.length)];    //pick a rand song
+    }, [area]);
     
 
     function splitInstructions(instructions: string | null): string[] {
@@ -110,6 +117,15 @@ function MealDetailPage() {
                 <YoutubePlayer videoId={song.youtubeID} />
                 </div>
             )}
+            <br></br>
+            
+            {isFinalStep && fact &&(
+                <div className="fact-box">
+                    <p>{fact}</p>
+                </div>
+            )}
+            <br></br>
+
             <h2>Ingredients</h2>
             <ul>
                 {ingredients.map((ingredient, index) => (
